@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pitié, rendez-moi mon téléphone 🥺</title>
+<style>
+  :root { --bg:#fff7e6; --ink:#2b2b2b; --accent:#ff4d6d; --accent2:#4361ee; --ok:#2ecc71; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Comic Sans MS","Chalkboard SE",system-ui,sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; }
+  header { text-align:center; padding:48px 16px 32px; background:linear-gradient(135deg,#ffd6e0,#ffe9a8); border-bottom:6px dashed var(--accent); }
+  header .big { font-size:84px; animation:wobble 1.6s infinite; display:inline-block; }
+  h1 { font-size:clamp(28px,6vw,52px); margin:8px 0; }
+  h2 { text-align:center; font-size:clamp(22px,4vw,34px); margin:0 0 20px; }
+  .sub { font-size:18px; max-width:640px; margin:0 auto; }
+  section { max-width:900px; margin:0 auto; padding:36px 16px; }
+  @keyframes wobble { 0%,100%{transform:rotate(-8deg)} 50%{transform:rotate(8deg)} }
+
+  .counter { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:20px; }
+  .counter div { background:#fff; border:3px solid var(--ink); border-radius:12px; padding:10px 18px; min-width:90px; box-shadow:4px 4px 0 var(--ink); }
+  .counter b { display:block; font-size:34px; color:var(--accent); }
+
+  .bar { background:#eee; border:3px solid var(--ink); border-radius:20px; height:34px; overflow:hidden; max-width:560px; margin:0 auto; }
+  .bar i { display:block; height:100%; width:0; background:repeating-linear-gradient(45deg,var(--accent),var(--accent) 12px,#ff758f 12px,#ff758f 24px); transition:width 3s; }
+  .barlabel { text-align:center; margin-top:8px; font-size:15px; }
+
+  .memes { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; }
+  .meme { position:relative; border:4px solid var(--ink); border-radius:14px; overflow:hidden; background:#222; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; box-shadow:6px 6px 0 var(--ink); }
+  .meme img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .meme .emoji { font-size:120px; }
+  .meme.a { background:linear-gradient(160deg,#4361ee,#7209b7); }
+  .meme.b { background:linear-gradient(160deg,#f72585,#ff9e00); }
+  .meme.c { background:linear-gradient(160deg,#06d6a0,#118ab2); }
+  .meme.d { background:linear-gradient(160deg,#ffd166,#ef476f); }
+  .cap { position:absolute; left:0; right:0; padding:0 22px; text-align:center; color:#fff; font:900 16px/1.35 Impact,"Arial Black",sans-serif; letter-spacing:.06em; text-transform:uppercase; text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 2px 6px rgba(0,0,0,.6); }
+  .cap.top { top:20px; } .cap.bot { bottom:20px; }
+
+  .card { background:#fff; border:3px solid var(--ink); border-radius:14px; padding:18px 22px; box-shadow:5px 5px 0 var(--ink); }
+  .card ul { margin:0; padding-left:0; list-style:none; }
+  .card li { padding:8px 0; border-bottom:2px dotted #ccc; cursor:pointer; user-select:none; }
+  .card li:last-child { border:0; }
+  .card li::before { content:"⬜ "; }
+  .card li.on::before { content:"✅ "; }
+  .card li.on { text-decoration:line-through; opacity:.7; }
+  .sign { text-align:right; margin-top:12px; font-style:italic; }
+
+  .reviews { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
+  .review { background:#fff; border:3px solid var(--ink); border-radius:14px; padding:14px 16px; }
+  .stars { color:#f4a300; letter-spacing:2px; }
+
+  .decision { text-align:center; min-height:260px; position:relative; }
+  button { font:inherit; font-weight:bold; font-size:20px; padding:14px 32px; border:3px solid var(--ink); border-radius:50px; cursor:pointer; box-shadow:4px 4px 0 var(--ink); }
+  button:active { transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
+  #yes { background:var(--ok); color:#fff; font-size:26px; }
+  #no { background:#ddd; position:relative; }
+  #result { display:none; font-size:30px; margin-top:24px; }
+  footer { text-align:center; padding:30px 16px 50px; font-size:14px; opacity:.7; }
+  .confetti { position:fixed; top:-20px; font-size:28px; pointer-events:none; animation:fall linear forwards; z-index:99; }
+  @keyframes fall { to { transform:translateY(110vh) rotate(720deg); } }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="big">🥺</span>
+  <h1>Chers parents, je suis désolée… PITIÉ, redonnez-moi mon téléphone !</h1>
+  <p class="sub">Ceci est une requête officielle, sincère et légèrement dramatique de <b id="prenom">Lison Romane Tara</b>.</p>
+  <div class="counter">
+    <div><b id="d">0</b>jours</div>
+    <div><b id="h">0</b>heures</div>
+    <div><b id="m">0</b>minutes</div>
+    <div><b id="s">0</b>secondes</div>
+  </div>
+  <p class="sub" style="margin-top:12px">…sans téléphone. Soit une éternité. 😭</p>
+</header>
+
+<section>
+  <h2>📡 Statut de ma vie sociale</h2>
+  <div class="bar"><i id="fill"></i></div>
+  <p class="barlabel">Reconnexion au monde moderne… 3%. Veuillez patienter.</p>
+</section>
+
+<section>
+  <h2>🖼️ Pièces à conviction</h2>
+  <!-- Pour mettre un vrai mmème : dépose l'image dans le dossier img/ (meme1.jpg, meme2.jpg, ...) -->
+  <div class="memes">
+    <div class="meme a"><img src="img/meme1.jpg" alt="" onerror="this.remove()"><span class="emoji">🧍📵</span>
+      <div class="cap top">Moi sans mon téléphone</div><div class="cap bot">Au bout de 5 minutes</div></div>
+    <div class="meme b"><img src="img/meme2.jpg" alt="" onerror="this.remove()"><span class="emoji">🐶🥹</span>
+      <div class="cap top">Moi devant vous</div><div class="cap bot">Avec les yeux de chien battu</div></div>
+    <div class="meme c"><img src="img/meme3.jpg" alt="" onerror="this.remove()"><span class="emoji">📚🤓</span>
+      <div class="cap top">Moi qui révise</div><div class="cap bot">(promis, c'est vrai)</div></div>
+    <div class="meme d"><img src="img/meme4.jpg" alt="" onerror="this.remove()"><span class="emoji">🤝💸</span>
+      <div class="cap top">Tout est négociable</div><div class="cap bot">Même la vaisselle</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>📜 Contrat de bonne conduite</h2>
+  <div class="card">
+    <ul id="contrat">
+      <li>Je promets de ranger ma chambre (au moins la partie visible)</li>
+      <li>Je promets de faire la vaisselle sans râler (à voix haute)</li>
+      <li>Je promets de ne plus regarder mon téléphone à table</li>
+      <li>Je promets de dire « bonjour » avant de demander mon téléphone</li>
+      <li>Je promets d'éteindre le téléphone à une heure raisonnable</li>
+      <li>Je promets d'aimer mes parents encore plus qu'avant (c'est possible)</li>
+    </ul>
+    <p class="sign">Clique pour cocher chaque engagement. Signature : ✍️ <i>(un gribouillis très sincère)</i></p>
+  </div>
+</section>
+
+<section>
+  <h2>⭐ Ils parlent de moi</h2>
+  <div class="reviews">
+    <div class="review"><div class="stars">★★★★★</div>« Elle a l'air très calme sans son téléphone. Trop calme. »<br><small>— Le chat de la maison</small></div>
+    <div class="review"><div class="stars">★★★★☆</div>« Je confirme, elle a regardé le mur pendant 20 minutes. »<br><small>— Le mur</small></div>
+    <div class="review"><div class="stars">★★★★★</div>« Elle a même proposé de sortir les poubelles. Appelez un médecin. »<br><small>— Un voisin inquiet</small></div>
+  </div>
+</section>
+
+<section class="decision">
+  <h2>⚖️ Votre décision, chers parents</h2>
+  <button id="yes">Oui, on lui rend son téléphone 📱</button>
+  <button id="no">Non</button>
+  <div id="result">🎉 MERCI MERCI MERCI !!! Vous êtes les meilleurs parents du monde ! 🎉</div>
+</section>
+
+<footer>Site réalisé avec amour, désespoir et une connexion Wi-Fi empruntée.<br>Aucun parent n'a été maltraité pendant la création de ce site.</footer>
+
+<script>
+  // ====== À PERSONNALISER ======
+  const PRENOM = "Lison Romane Tara";
+  const DEBUT  = new Date("2026-10-11T17:00:00"); // date et heure de la confiscation
+  // =============================
+
+  if (PRENOM) document.getElementById("prenom").textContent = PRENOM;
+
+  function tick(){
+    let t = Math.max(0, Math.floor((Date.now() - DEBUT.getTime())/1000));
+    document.getElementById("d").textContent = Math.floor(t/86400);
+    document.getElementById("h").textContent = Math.floor(t%86400/3600);
+    document.getElementById("m").textContent = Math.floor(t%3600/60);
+    document.getElementById("s").textContent = t%60;
+  }
+  tick(); setInterval(tick,1000);
+  setTimeout(()=>document.getElementById("fill").style.width="3%",300);
+
+  document.querySelectorAll("#contrat li").forEach(li=>li.onclick=()=>li.classList.toggle("on"));
+
+  // Bouton "Non" qui s'enfuit
+  const no = document.getElementById("no");
+  const phrases = ["Non","Vraiment ?","Réfléchissez…","Même pas un peu ?","🥺","Pitié !","Allez…","Je fais la vaisselle !","Bouton cassé 😇"];
+  let n = 0;
+  function flee(e){
+    e.preventDefault();
+    n++; no.textContent = phrases[n % phrases.length];
+    no.style.position = "fixed";
+    no.style.left = Math.random()*(innerWidth-160)+"px";
+    no.style.top  = Math.random()*(innerHeight-70)+"px";
+    const y = document.getElementById("yes");
+    y.style.transform = "scale(" + Math.min(1+n*0.12, 2) + ")";
+  }
+  no.addEventListener("mouseenter",flee);
+  no.addEventListener("touchstart",flee,{passive:false});
+  no.addEventListener("click",flee);
+
+  document.getElementById("yes").onclick = () => {
+    document.getElementById("result").style.display = "block";
+    no.style.display = "none";
+    const e = ["🎉","📱","🥳","❤️","✨","🎊"];
+    for(let i=0;i<60;i++){
+      const c = document.createElement("span");
+      c.className = "confetti";
+      c.textContent = e[i%e.length];
+      c.style.left = Math.random()*100+"vw";
+      c.style.animationDuration = (2+Math.random()*3)+"s";
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),5500);
+    }
+  };
+</script>
+</body>
+</html>
